@@ -1,6 +1,28 @@
 param location string
 param index int
 
+resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2025-09-01' = {
+  name: 'nsg-${resourceGroup().name}'
+  location: location
+  properties: {
+    securityRules: [
+      {
+        name: 'AllowSSH'
+        properties: {
+          priority: 1000
+          direction: 'Inbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '22'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+        }
+      }
+    ]
+  }
+}
+
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2025-05-01' = {
   name: 'vnet-${resourceGroup().name}'
   location: location
@@ -19,7 +41,7 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2025-05-01' = {
   properties: {
     addressPrefix: '10.${index}.0.0/24'
     networkSecurityGroup: {
-      id: nsg.id
+      id: networkSecurityGroup.id
     }
   }
 }
