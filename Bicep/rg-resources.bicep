@@ -18,6 +18,9 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2025-05-01' = {
   name: 'subnet1-${resourceGroup().name}'
   properties: {
     addressPrefix: '10.${index}.0.0/24'
+    networkSecurityGroup: {
+      id: nsg.id
+    }
   }
 }
 
